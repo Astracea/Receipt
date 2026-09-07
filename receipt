@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retro Receipt Generator Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js">
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-dark: #0a0a12;
@@ -26,11 +29,6 @@
             --btn-warning-hover: #ffbb44;
             --btn-info: #3498db;
             --btn-info-hover: #4aa3df;
-            --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.15);
-            --receipt-bg: #faf8f2;
-            --receipt-text: #1a1a1a;
-            --receipt-line: #333;
-            --receipt-paper: #f5f0e6;
         }
 
         * {
@@ -70,12 +68,11 @@
         .site-header {
             text-align: center;
             padding: 30px 20px 10px;
-            position: relative;
         }
 
         .site-header h1 {
             font-family: 'VT323', 'Courier New', monospace;
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 400;
             letter-spacing: 4px;
             color: var(--text-accent);
@@ -109,7 +106,7 @@
             display: flex;
             gap: 30px;
             padding: 20px 30px 40px;
-            max-width: 1500px;
+            max-width: 1400px;
             margin: 0 auto;
             align-items: flex-start;
         }
@@ -121,12 +118,12 @@
             border: 1px solid var(--border-glow);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .form-panel h2 {
             font-family: 'VT323', 'Courier New', monospace;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 400;
             color: var(--text-accent);
             letter-spacing: 2px;
@@ -136,12 +133,12 @@
         }
 
         .form-section {
-            margin-bottom: 22px;
+            margin-bottom: 18px;
         }
 
         .form-section label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: #9999bb;
@@ -158,7 +155,7 @@
             border-radius: 6px;
             color: var(--text-primary);
             font-family: 'Share Tech Mono', 'Courier New', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
             outline: none;
         }
@@ -172,7 +169,7 @@
 
         .form-section textarea {
             resize: vertical;
-            min-height: 50px;
+            min-height: 60px;
         }
 
         .form-row {
@@ -184,74 +181,13 @@
             flex: 1;
         }
 
-        .item-list {
-            margin-bottom: 15px;
-        }
-
-        .item-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            align-items: center;
-        }
-
-        .item-row input {
-            padding: 8px 10px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-glow);
-            border-radius: 5px;
-            color: var(--text-primary);
-            font-family: 'Share Tech Mono', 'Courier New', monospace;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .item-row input:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
-        }
-
-        .item-row .item-name {
-            flex: 3;
-            min-width: 80px;
-        }
-        .item-row .item-qty {
-            flex: 1;
-            min-width: 50px;
-            text-align: center;
-        }
-        .item-row .item-price {
-            flex: 1.5;
-            min-width: 60px;
-            text-align: right;
-        }
-
-        .item-row .remove-btn {
-            padding: 8px 10px;
-            background: transparent;
-            border: 1px solid var(--btn-danger);
-            color: var(--btn-danger);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            white-space: nowrap;
-        }
-        .item-row .remove-btn:hover {
-            background: var(--btn-danger);
-            color: #fff;
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
-        }
-
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-family: 'Share Tech Mono', 'Courier New', monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -268,7 +204,6 @@
         .btn-primary:hover {
             background: var(--btn-primary-hover);
             box-shadow: 0 0 20px rgba(0, 204, 102, 0.4);
-            transform: translateY(-1px);
         }
 
         .btn-danger {
@@ -279,7 +214,6 @@
         .btn-danger:hover {
             background: var(--btn-danger);
             color: #fff;
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
         }
 
         .btn-warning {
@@ -290,7 +224,6 @@
         .btn-warning:hover {
             background: var(--btn-warning);
             color: #0a0a12;
-            box-shadow: 0 0 15px rgba(240, 160, 48, 0.3);
         }
 
         .btn-info {
@@ -300,12 +233,11 @@
         .btn-info:hover {
             background: var(--btn-info-hover);
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
-            transform: translateY(-1px);
         }
 
         .btn-sm {
-            padding: 7px 14px;
-            font-size: 0.75rem;
+            padding: 7px 12px;
+            font-size: 0.7rem;
         }
 
         .btn-group {
@@ -316,8 +248,7 @@
         }
 
         .receipt-panel {
-            flex: 0 0 420px;
-            min-width: 350px;
+            flex: 0 0 380px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -326,218 +257,165 @@
 
         .receipt-panel h3 {
             font-family: 'VT323', 'Courier New', monospace;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 400;
             color: #8888aa;
             letter-spacing: 2px;
-            text-transform: uppercase;
         }
 
-        .receipt-container {
-            background: var(--receipt-paper);
-            border-radius: 4px;
-            padding: 0;
-            box-shadow:
-                0 2px 4px rgba(0, 0, 0, 0.3),
-                0 8px 32px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.05);
+        /* RECEIPT STYLES - Blending both designs */
+        #receiptContainer {
+            background: transparent;
             width: 100%;
-            max-width: 400px;
+            max-width: 340px;
             position: relative;
             transition: all 0.3s ease;
-            overflow: hidden;
         }
 
-        .receipt-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: repeating-linear-gradient(90deg,
-                    rgba(0, 0, 0, 0.008) 0px,
-                    rgba(0, 0, 0, 0.008) 1px,
-                    transparent 1px,
-                    transparent 4px);
-            z-index: 1;
-        }
-
-        .receipt {
-            padding: 25px 18px 20px;
+        #receipt {
+            width: 320px;
+            background: #fff;
+            padding: 20px 18px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            color: #000;
             font-family: 'Share Tech Mono', 'Courier New', monospace;
-            font-size: 0.78rem;
-            color: var(--receipt-text);
-            line-height: 1.55;
-            letter-spacing: 0.2px;
-            position: relative;
-            z-index: 2;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .receipt * {
-            font-family: inherit;
-            color: inherit;
-            letter-spacing: inherit;
-        }
-
-        .receipt .rc-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin: 1px 0;
-        }
-
-        .receipt .rc-center {
-            text-align: center;
-            display: block;
-            width: 100%;
-        }
-
-        .receipt .rc-asterisk {
-            font-family: 'VT323', 'Courier New', monospace;
-            font-size: 1.05rem;
-            letter-spacing: 3px;
-            text-align: center;
-            display: block;
-            color: inherit;
-            line-height: 1.2;
-            user-select: none;
-        }
-
-        .receipt .rc-dash {
-            display: block;
-            text-align: center;
-            letter-spacing: 2px;
-            user-select: none;
-            color: inherit;
-            line-height: 1.1;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .receipt .rc-store-name {
-            font-family: 'VT323', 'Courier New', monospace;
-            font-size: 1.55rem;
-            letter-spacing: 3px;
-            text-align: center;
-            display: block;
-            line-height: 1.3;
-            text-transform: uppercase;
-        }
-
-        .receipt .rc-address {
-            text-align: center;
-            font-size: 0.72rem;
+            font-size: 12px;
+            line-height: 1.5;
             letter-spacing: 0.5px;
+            margin: 0 auto;
+            min-height: 400px;
         }
 
-        .receipt .rc-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-        }
-
-        .receipt .rc-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        .receipt .rc-item-name {
-            flex: 2;
-            text-align: left;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-        .receipt .rc-item-qty {
-            flex: 0.6;
-            text-align: center;
-            font-size: 0.75rem;
-        }
-        .receipt .rc-item-price {
-            flex: 1.4;
-            text-align: right;
-            font-size: 0.75rem;
-        }
-
-        .receipt .rc-total-line {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .receipt .rc-footer-msg {
-            text-align: center;
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-        }
-
-        .receipt .rc-barcode {
-            text-align: center;
-            font-size: 0.65rem;
-            letter-spacing: 1px;
-            user-select: none;
-            line-height: 1.4;
-            margin-top: 5px;
-        }
-
-        .receipt .rc-logo {
-            display: block;
-            margin: 0 auto 10px;
-            max-width: 100%;
-            max-height: 80px;
-            object-fit: contain;
-            text-align: center;
-        }
-
-        .receipt .rc-logo-placeholder {
-            display: block;
-            text-align: center;
-            font-size: 0.6rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 8px;
-            border: 1px dashed #aaa;
-            padding: 15px;
-            border-radius: 3px;
-        }
-
-        .receipt-container.scheme-classic .receipt {
+        /* Receipt color schemes */
+        #receipt.scheme-classic {
             background: #faf8f2;
             color: #1a1a1a;
         }
-
-        .receipt-container.scheme-inverted .receipt {
+        #receipt.scheme-inverted {
             background: #111;
             color: #eee;
         }
-
-        .receipt-container.scheme-blue .receipt {
+        #receipt.scheme-blue {
             background: #f0f4ff;
             color: #003366;
         }
-
-        .receipt-container.scheme-amber .receipt {
-            background: #1a0e00;
-            color: #ffbf40;
-        }
-
-        .receipt-container.scheme-green .receipt {
+        #receipt.scheme-green {
             background: #0a1a0a;
             color: #33ff66;
         }
-
-        .receipt-container.scheme-pink .receipt {
+        #receipt.scheme-amber {
+            background: #1a0e00;
+            color: #ffbf40;
+        }
+        #receipt.scheme-pink {
             background: #1a0a12;
             color: #ff66aa;
+        }
+
+        .center {
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 15px;
+        }
+        .logo {
+            max-width: 120px;
+            max-height: 80px;
+            margin-bottom: 8px;
+            object-fit: contain;
+        }
+        .logo-placeholder {
+            display: block;
+            border: 1px dashed #aaa;
+            padding: 10px;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            border-radius: 3px;
+        }
+        .mono-header {
+            font-family: 'VT323', 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: 400;
+            letter-spacing: 3px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+        .divider {
+            border-top: 1px dashed currentColor;
+            margin: 8px 0;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .spacer {
+            height: 12px;
+        }
+        .spacer-sm {
+            height: 5px;
+        }
+        .barcode-area {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .barcode-svg {
+            max-width: 100%;
+            height: 50px;
+        }
+        .barcode-text {
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+        .tip-line {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .signature {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        .signature span {
+            white-space: nowrap;
+        }
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .footer div {
+            margin: 2px 0;
+        }
+        .asterisk-line {
+            font-family: 'VT323', 'Courier New', monospace;
+            letter-spacing: 4px;
+            text-align: center;
+            font-size: 14px;
+            user-select: none;
+        }
+        .dash-line {
+            letter-spacing: 2px;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .print-toolbar {
@@ -552,33 +430,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
         }
-
         .logo-preview img {
             max-height: 40px;
-            max-width: 120px;
+            max-width: 100px;
             object-fit: contain;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 4px;
             padding: 3px;
-        }
-
-        .logo-preview .remove-logo-btn {
-            background: transparent;
-            border: 1px solid var(--btn-danger);
-            color: var(--btn-danger);
-            border-radius: 4px;
-            padding: 4px 8px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .logo-preview .remove-logo-btn:hover {
-            background: var(--btn-danger);
-            color: #fff;
         }
 
         .toast {
@@ -597,14 +456,11 @@
             z-index: 99999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.4s ease;
             border: 1px solid #444;
         }
-
         .toast.show {
             opacity: 1;
-            pointer-events: auto;
-            transform: translateX(-50%) translateY(-10px);
         }
 
         @media (max-width: 1100px) {
@@ -614,61 +470,16 @@
             }
             .form-panel {
                 width: 100%;
-                max-width: 700px;
+                max-width: 650px;
             }
             .receipt-panel {
                 width: 100%;
-                max-width: 480px;
-            }
-            .receipt-container {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .site-header h1 {
-                font-size: 2.2rem;
-                letter-spacing: 2px;
-            }
-            .main-container {
-                padding: 15px;
-                gap: 20px;
-            }
-            .form-panel {
-                padding: 15px;
-            }
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            .item-row {
-                flex-wrap: wrap;
-            }
-            .item-row .item-name {
-                flex: 1 1 100%;
-            }
-            .item-row .item-qty,
-            .item-row .item-price {
-                flex: 1;
-            }
-            .receipt-container {
-                max-width: 100%;
-            }
-            .receipt {
-                font-size: 0.7rem;
-                padding: 18px 12px 14px;
-            }
-            .receipt .rc-store-name {
-                font-size: 1.3rem;
             }
         }
 
         @media print {
             body {
                 background: #fff !important;
-                color: #000 !important;
-                margin: 0;
-                padding: 0;
             }
             body::before {
                 display: none !important;
@@ -684,55 +495,31 @@
                 display: block !important;
                 padding: 0 !important;
                 margin: 0 !important;
-                max-width: none !important;
             }
             .receipt-panel {
                 display: block !important;
-                flex: none !important;
-                min-width: 0 !important;
-                max-width: none !important;
                 width: 100% !important;
                 margin: 0 !important;
-                padding: 0 !important;
             }
-            .receipt-container {
+            #receiptContainer {
+                max-width: 100% !important;
                 box-shadow: none !important;
-                border-radius: 0 !important;
-                max-width: 100% !important;
-                width: 100% !important;
                 margin: 0 !important;
-                padding: 0 !important;
-                background: #fff !important;
             }
-            .receipt-container::after {
-                display: none !important;
-            }
-            .receipt {
-                padding: 10px 12px !important;
-                font-size: 0.72rem !important;
-                background: #fff !important;
-                color: #000 !important;
-                max-width: 100% !important;
-            }
-            .receipt .rc-asterisk,
-            .receipt .rc-dash,
-            .receipt .rc-store-name,
-            .receipt .rc-barcode,
-            .receipt .rc-footer-msg {
-                color: #000 !important;
-            }
-            .receipt-container.scheme-inverted .receipt,
-            .receipt-container.scheme-blue .receipt,
-            .receipt-container.scheme-amber .receipt,
-            .receipt-container.scheme-green .receipt,
-            .receipt-container.scheme-pink .receipt,
-            .receipt-container.scheme-classic .receipt {
+            #receipt {
+                box-shadow: none !important;
+                margin: 0 auto !important;
+                width: 320px !important;
                 background: #fff !important;
                 color: #000 !important;
             }
-            .receipt .rc-logo-placeholder {
-                border-color: #aaa !important;
-                color: #555 !important;
+            #receipt.scheme-inverted,
+            #receipt.scheme-blue,
+            #receipt.scheme-green,
+            #receipt.scheme-amber,
+            #receipt.scheme-pink {
+                background: #fff !important;
+                color: #000 !important;
             }
             @page {
                 margin: 8mm 6mm;
@@ -750,657 +537,426 @@
             background: #333355;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444477;
-        }
-
-        .item-count {
-            font-size: 0.7rem;
-            color: #666688;
-            letter-spacing: 1px;
-        }
-
-        .form-section input:hover,
-        .form-section select:hover {
-            border-color: #3a3a5a;
-        }
-
-        .btn:focus-visible,
-        .form-section input:focus-visible,
-        .form-section select:focus-visible,
-        .item-row input:focus-visible,
-        .item-row .remove-btn:focus-visible {
-            outline: 2px solid var(--border-focus);
-            outline-offset: 2px;
-        }
     </style>
 </head>
 <body>
 
-    <!-- ===== TOAST NOTIFICATION ===== -->
+    <!-- TOAST NOTIFICATION -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== SITE HEADER ===== -->
+    <!-- HEADER -->
     <header class="site-header">
         <h1>&#9670; RETRO RECEIPT GENERATOR PRO &#9670;</h1>
         <p class="subtitle">// Generate Authentic Dot-Matrix Receipts <span>&#9608;</span></p>
     </header>
 
-    <!-- ===== MAIN CONTENT ===== -->
+    <!-- MAIN CONTENT -->
     <div class="main-container">
 
-        <!-- ===== FORM PANEL ===== -->
-        <div class="form-panel" id="formPanel">
-            <h2>&#9654; RECEIPT CONFIGURATION</h2>
+        <!-- FORM PANEL -->
+        <div class="form-panel">
+            <h2>&#9654; CUSTOMIZE YOUR RECEIPT</h2>
 
             <!-- Store Info -->
             <div class="form-section">
-                <label for="storeName">Store Name</label>
-                <input type="text" id="storeName" value="FOOD CLUB MARKET" placeholder="Enter store name">
+                <label>Receipt Title / Store Name</label>
+                <input type="text" id="storeName" value="SILLUEETTE'S CAFE" oninput="renderReceipt()">
             </div>
+
             <div class="form-row">
                 <div class="form-section">
-                    <label for="storeAddress">Address</label>
-                    <input type="text" id="storeAddress" value="123 Main Street" placeholder="Street address">
+                    <label>Address Line 1</label>
+                    <input type="text" id="storeAddress" value="262, CAPITAL OF LILACITH" oninput="renderReceipt()">
                 </div>
                 <div class="form-section">
-                    <label for="storeCity">City, State ZIP</label>
-                    <input type="text" id="storeCity" value="Anytown, USA 12345" placeholder="City, State ZIP">
+                    <label>City</label>
+                    <input type="text" id="storeCity" value="LILACITH" oninput="renderReceipt()">
                 </div>
             </div>
+
             <div class="form-section">
-                <label for="storePhone">Phone Number</label>
-                <input type="text" id="storePhone" value="Tel: (555) 123-4567" placeholder="Tel: (555) 123-4567">
+                <label>Phone Number</label>
+                <input type="text" id="storePhone" value="0135508701" oninput="renderReceipt()">
             </div>
 
             <!-- Logo Upload -->
             <div class="form-section">
-                <label for="logoUpload">Logo (PNG, JPG, SVG)</label>
-                <input type="file" id="logoUpload" accept="image/*" style="padding:8px;">
+                <label>Upload Logo (PNG, JPG, SVG)</label>
+                <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
                 <div class="logo-preview" id="logoPreview"></div>
-                <button class="btn btn-danger btn-sm" id="removeLogoBtn" style="margin-top:5px; display:none;">&#10005; Remove Logo</button>
+                <button class="btn btn-danger btn-sm" id="removeLogoBtn" style="display:none;" onclick="removeLogo()">&#10005; Remove Logo</button>
+            </div>
+
+            <!-- Order & Host -->
+            <div class="form-row">
+                <div class="form-section">
+                    <label>Order #</label>
+                    <input type="text" id="orderNumber" value="1" oninput="renderReceipt()">
+                </div>
+                <div class="form-section">
+                    <label>Host / Cashier</label>
+                    <input type="text" id="hostName" value="SILL" oninput="renderReceipt()">
+                </div>
             </div>
 
             <div class="form-row">
                 <div class="form-section">
-                    <label for="receiptNumber">Receipt #</label>
-                    <input type="text" id="receiptNumber" value="004827" placeholder="e.g. 004827">
+                    <label>Date</label>
+                    <input type="text" id="receiptDate" value="15 AUG 2026" oninput="renderReceipt()">
                 </div>
                 <div class="form-section">
-                    <label for="cashierName">Cashier</label>
-                    <input type="text" id="cashierName" value="JOHN" placeholder="Cashier name">
+                    <label>Time</label>
+                    <input type="text" id="receiptTime" value="12:35 PM" oninput="renderReceipt()">
                 </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-section">
-                    <label for="receiptDate">Date</label>
-                    <input type="date" id="receiptDate">
-                </div>
-                <div class="form-section">
-                    <label for="receiptTime">Time</label>
-                    <input type="time" id="receiptTime">
-                </div>
-            </div>
-
-            <!-- Barcode Settings -->
-            <div class="form-section">
-                <label for="barcodeText">Barcode Text (shown below barcode)</label>
-                <input type="text" id="barcodeText" value="004827" placeholder="Barcode text">
             </div>
 
             <!-- Items -->
-            <div class="form-section" style="margin-top:8px;">
-                <label>Items <span class="item-count" id="itemCount">(3 items)</span></label>
-                <div class="item-list" id="itemList">
-                    <!-- Items injected by JS -->
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" id="addItemBtn">+ Add Item</button>
-                    <button class="btn btn-warning btn-sm" id="sampleDataBtn">&#8635; Sample Data</button>
-                </div>
+            <div class="form-section">
+                <label>Item Name</label>
+                <input type="text" id="itemName" value="1 BUST UP SKETCH" oninput="renderReceipt()">
             </div>
-
-            <!-- Totals & Payment -->
             <div class="form-row">
                 <div class="form-section">
-                    <label for="taxRate">Tax Rate (%)</label>
-                    <input type="number" id="taxRate" value="8.5" min="0" max="30" step="0.1" placeholder="8.5">
+                    <label>Item Price ($)</label>
+                    <input type="number" id="itemPrice" value="15.00" step="0.01" min="0" oninput="renderReceipt()">
                 </div>
                 <div class="form-section">
-                    <label for="amountPaid">Amount Paid ($)</label>
-                    <input type="number" id="amountPaid" value="20.00" min="0" step="0.01" placeholder="20.00">
+                    <label>Tax ($)</label>
+                    <input type="number" id="taxAmount" value="0.00" step="0.01" min="0" oninput="renderReceipt()">
                 </div>
             </div>
 
-            <!-- Footer message -->
-            <div class="form-section">
-                <label for="footerMsg">Footer Message</label>
-                <textarea id="footerMsg" rows="2">THANK YOU FOR SHOPPING!
-                    HAVE A GREAT DAY!</textarea>
+            <!-- Payment Info -->
+            <div class="form-row">
+                <div class="form-section">
+                    <label>Transaction Type</label>
+                    <input type="text" id="transactionType" value="SALE" oninput="renderReceipt()">
+                </div>
+                <div class="form-section">
+                    <label>Authorization</label>
+                    <input type="text" id="authorization" value="APPROVED" oninput="renderReceipt()">
+                </div>
             </div>
 
-            <!-- Color scheme -->
+            <div class="form-row">
+                <div class="form-section">
+                    <label>Payment Code</label>
+                    <input type="text" id="paymentCode" value="" placeholder="Optional" oninput="renderReceipt()">
+                </div>
+                <div class="form-section">
+                    <label>Card Reader</label>
+                    <input type="text" id="cardReader" value="" placeholder="Optional" oninput="renderReceipt()">
+                </div>
+            </div>
+
+            <!-- Barcode -->
             <div class="form-section">
-                <label for="colorScheme">Receipt Color Scheme</label>
-                <select id="colorScheme">
+                <label>Barcode Value</label>
+                <input type="text" id="barcodeValue" value="0135508701" oninput="renderReceipt()">
+            </div>
+
+            <!-- Footer -->
+            <div class="form-section">
+                <label>Footer Message</label>
+                <textarea id="footerMsg" rows="3" oninput="renderReceipt()">THANKS FOR VISITING DEAR
+        LITTLE ANGEL</textarea>
+            </div>
+
+            <!-- Color Scheme -->
+            <div class="form-section">
+                <label>Color Scheme</label>
+                <select id="colorScheme" onchange="renderReceipt()">
                     <option value="classic">Classic (Black on Cream)</option>
                     <option value="inverted">Inverted (White on Black)</option>
-                    <option value="blue">Vintage Blue (Blue on White)</option>
-                    <option value="green">Terminal Green (Green on Black)</option>
-                    <option value="amber">Amber CRT (Amber on Dark)</option>
-                    <option value="pink">Retro Pink (Pink on Dark)</option>
+                    <option value="blue">Vintage Blue</option>
+                    <option value="green">Terminal Green</option>
+                    <option value="amber">Amber CRT</option>
+                    <option value="pink">Retro Pink</option>
                 </select>
             </div>
 
-            <!-- Action buttons -->
-            <div class="btn-group" style="margin-top:15px; gap:12px;">
-                <button class="btn btn-primary" id="printBtn">&#128424; Print Receipt</button>
-                <button class="btn btn-info" id="downloadPngBtn">&#128190; Download PNG</button>
-                <button class="btn btn-danger" id="clearBtn">&#10005; Clear All</button>
+            <!-- Action Buttons -->
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="downloadPNG()">&#128190; Download PNG</button>
+                <button class="btn btn-info" onclick="printReceipt()">&#128424; Print</button>
+                <button class="btn btn-warning" onclick="resetToDefault()">&#8635; Reset</button>
             </div>
         </div>
 
-        <!-- ===== RECEIPT PANEL ===== -->
+        <!-- RECEIPT PANEL -->
         <div class="receipt-panel">
             <h3>&#9654; LIVE PREVIEW</h3>
-            <div class="receipt-container scheme-classic" id="receiptContainer">
-                <div class="receipt" id="receiptContent">
-                    <!-- Receipt content generated by JS -->
+
+            <div id="receiptContainer">
+                <div id="receipt" class="scheme-classic">
+                    <!-- Receipt content rendered by JS -->
                 </div>
             </div>
+
             <div class="print-toolbar">
-                <button class="btn btn-primary btn-sm" id="printBtn2">&#128424; Print</button>
-                <button class="btn btn-info btn-sm" id="downloadPngBtn2">&#128190; PNG</button>
-                <button class="btn btn-warning btn-sm" id="resetBtn">&#8635; New Receipt #</button>
+                <button class="btn btn-primary btn-sm" onclick="downloadPNG()">&#128190; PNG</button>
+                <button class="btn btn-info btn-sm" onclick="printReceipt()">&#128424; Print</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        (function() {
-            'use strict';
+        let logoDataUrl = null;
 
-            // ===== DOM ELEMENTS =====
-            const storeName = document.getElementById('storeName');
-            const storeAddress = document.getElementById('storeAddress');
-            const storeCity = document.getElementById('storeCity');
-            const storePhone = document.getElementById('storePhone');
-            const receiptNumber = document.getElementById('receiptNumber');
-            const cashierName = document.getElementById('cashierName');
-            const receiptDate = document.getElementById('receiptDate');
-            const receiptTime = document.getElementById('receiptTime');
-            const taxRate = document.getElementById('taxRate');
-            const amountPaid = document.getElementById('amountPaid');
-            const footerMsg = document.getElementById('footerMsg');
-            const colorScheme = document.getElementById('colorScheme');
-            const barcodeText = document.getElementById('barcodeText');
-            const itemList = document.getElementById('itemList');
-            const itemCountSpan = document.getElementById('itemCount');
-            const addItemBtn = document.getElementById('addItemBtn');
-            const sampleDataBtn = document.getElementById('sampleDataBtn');
-            const printBtn = document.getElementById('printBtn');
-            const printBtn2 = document.getElementById('printBtn2');
-            const clearBtn = document.getElementById('clearBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const downloadPngBtn = document.getElementById('downloadPngBtn');
-            const downloadPngBtn2 = document.getElementById('downloadPngBtn2');
-            const receiptContainer = document.getElementById('receiptContainer');
-            const receiptContent = document.getElementById('receiptContent');
-            const logoUpload = document.getElementById('logoUpload');
-            const logoPreview = document.getElementById('logoPreview');
-            const removeLogoBtn = document.getElementById('removeLogoBtn');
-            const toast = document.getElementById('toast');
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
-            // ===== STATE =====
-            let items = [];
-            let itemIdCounter = 0;
-            let logoDataUrl = null;
+        function generateDashLine(width) {
+            return '-'.repeat(width || 34);
+        }
 
-            // ===== INITIALIZATION =====
-            function init() {
-                const now = new Date();
-                receiptDate.value = now.toISOString().split('T')[0];
-                receiptTime.value = now.toTimeString().slice(0, 5);
-                barcodeText.value = receiptNumber.value;
+        function generateAsteriskLine(width) {
+            return '*'.repeat(width || 36);
+        }
 
-                generateNewReceiptNumber();
-                loadSampleItems();
-                setupEventListeners();
-                renderReceipt();
+        function renderReceipt() {
+            const receipt = document.getElementById('receipt');
+            const scheme = document.getElementById('colorScheme').value;
+            const storeName = document.getElementById('storeName').value || 'SILLUEETTE\'S CAFE';
+            const address = document.getElementById('storeAddress').value || '';
+            const city = document.getElementById('storeCity').value || '';
+            const phone = document.getElementById('storePhone').value || '';
+            const orderNum = document.getElementById('orderNumber').value || '1';
+            const hostName = document.getElementById('hostName').value || 'SILL';
+            const dateVal = document.getElementById('receiptDate').value || '';
+            const timeVal = document.getElementById('receiptTime').value || '';
+            const itemName = document.getElementById('itemName').value || '1 BUST UP SKETCH';
+            const itemPrice = parseFloat(document.getElementById('itemPrice').value) || 0;
+            const taxVal = parseFloat(document.getElementById('taxAmount').value) || 0;
+            const transactionType = document.getElementById('transactionType').value || 'SALE';
+            const authorization = document.getElementById('authorization').value || 'APPROVED';
+            const paymentCode = document.getElementById('paymentCode').value || '';
+            const cardReader = document.getElementById('cardReader').value || '';
+            const barcodeVal = document.getElementById('barcodeValue').value || '0135508701';
+            const footerMsgRaw = document.getElementById('footerMsg').value || '';
+            const footerLines = footerMsgRaw.split('\n').filter(l => l.trim().length > 0);
+
+            const subtotal = itemPrice;
+            const total = subtotal + taxVal;
+
+            const dashLine = generateDashLine(36);
+            const asteriskLine = generateAsteriskLine(36);
+
+            let html = '';
+
+            // Top asterisk
+            html += `<div class="asterisk-line">${asteriskLine}</div>`;
+
+            // Header section
+            html += `<div class="header center" style="margin-top:10px;">`;
+
+            if (logoDataUrl) {
+                html += `<img src="${logoDataUrl}" class="logo" alt="Logo">`;
             }
 
-            function generateNewReceiptNumber() {
-                const num = String(Math.floor(100000 + Math.random() * 900000));
-                receiptNumber.value = num;
-                barcodeText.value = num;
-            }
+            html += `<div class="mono-header">${escapeHtml(storeName.toUpperCase())}</div>`;
+            if (address) html += `<div>${escapeHtml(address)}</div>`;
+            if (city) html += `<div>${escapeHtml(city)}</div>`;
+            if (phone) html += `<div>${escapeHtml(phone)}</div>`;
+            html += `</div>`;
 
-            function loadSampleItems() {
-                items = [
-                    { id: itemIdCounter++, name: 'Milk (Whole)', qty: 1, price: 3.99 },
-                    { id: itemIdCounter++, name: 'Bread (Sourdough)', qty: 2, price: 2.99 },
-                    { id: itemIdCounter++, name: 'Eggs (Dozen)', qty: 1, price: 4.50 },
-                ];
-                renderItemList();
-            }
+            // Divider
+            html += `<div class="divider"></div>`;
 
-            function clearAllItems() {
-                items = [];
-                renderItemList();
-                renderReceipt();
-            }
+            // Order & Host row
+            html += `<div class="row"><span>ORDER: ${escapeHtml(orderNum)}</span><span>${escapeHtml(dateVal)}</span></div>`;
+            html +=
+                `<div class="row"><span>HOST: ${escapeHtml(hostName)}</span><span>${escapeHtml(timeVal)}</span></div>`;
 
-            // ===== EVENT LISTENERS =====
-            function setupEventListeners() {
-                const formInputs = [
-                    storeName, storeAddress, storeCity, storePhone, receiptNumber,
-                    cashierName, receiptDate, receiptTime, taxRate, amountPaid, footerMsg,
-                    colorScheme, barcodeText
-                ];
-                formInputs.forEach(input => {
-                    input.addEventListener('input', renderReceipt);
-                    input.addEventListener('change', renderReceipt);
-                });
+            html += `<div class="spacer-sm"></div>`;
+            html += `<div class="divider"></div>`;
 
-                receiptNumber.addEventListener('input', () => {
-                    if (!barcodeText.value || barcodeText.value === '') {
-                        // Only auto-sync if barcode text is empty or was synced before
-                    }
-                });
+            // Item
+            html +=
+                `<div class="item-row"><span>${escapeHtml(itemName)}</span><span>$ ${itemPrice.toFixed(2)}</span></div>`;
 
-                addItemBtn.addEventListener('click', () => {
-                    items.push({ id: itemIdCounter++, name: '', qty: 1, price: 0 });
-                    renderItemList();
-                    renderReceipt();
-                });
+            html += `<div class="spacer-sm"></div>`;
+            html += `<div class="divider"></div>`;
 
-                sampleDataBtn.addEventListener('click', () => {
-                    loadSampleItems();
-                    renderReceipt();
-                });
+            // Payment info
+            html += `<div class="row"><span>CASH</span><span>${escapeHtml(transactionType)}</span></div>`;
+            html += `<div class="divider"></div>`;
 
-                printBtn.addEventListener('click', handlePrint);
-                printBtn2.addEventListener('click', handlePrint);
+            // Totals
+            html += `<div class="row"><span>SUBTOTAL</span><span>$ ${subtotal.toFixed(2)}</span></div>`;
+            html += `<div class="row"><span>TAX</span><span>$ ${taxVal.toFixed(2)}</span></div>`;
+            html +=
+                `<div class="total-row"><span>TOTAL:</span><span>$ ${total.toFixed(2)}</span></div>`;
 
-                downloadPngBtn.addEventListener('click', downloadPng);
-                downloadPngBtn2.addEventListener('click', downloadPng);
-
-                clearBtn.addEventListener('click', () => {
-                    clearAllItems();
-                    storeName.value = '';
-                    storeAddress.value = '';
-                    storeCity.value = '';
-                    storePhone.value = '';
-                    cashierName.value = '';
-                    taxRate.value = '8.5';
-                    amountPaid.value = '20.00';
-                    footerMsg.value = '';
-                    barcodeText.value = '';
-                    logoDataUrl = null;
-                    logoUpload.value = '';
-                    logoPreview.innerHTML = '';
-                    removeLogoBtn.style.display = 'none';
-                    renderReceipt();
-                });
-
-                resetBtn.addEventListener('click', () => {
-                    generateNewReceiptNumber();
-                    barcodeText.value = receiptNumber.value;
-                    renderReceipt();
-                });
-
-                logoUpload.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            logoDataUrl = event.target.result;
-                            updateLogoPreview();
-                            renderReceipt();
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                removeLogoBtn.addEventListener('click', () => {
-                    logoDataUrl = null;
-                    logoUpload.value = '';
-                    logoPreview.innerHTML = '';
-                    removeLogoBtn.style.display = 'none';
-                    renderReceipt();
-                });
-
-                itemList.addEventListener('input', (e) => {
-                    const row = e.target.closest('.item-row');
-                    if (!row) return;
-                    const id = parseInt(row.dataset.id);
-                    const item = items.find(i => i.id === id);
-                    if (!item) return;
-
-                    if (e.target.classList.contains('item-name')) {
-                        item.name = e.target.value;
-                    } else if (e.target.classList.contains('item-qty')) {
-                        item.qty = parseFloat(e.target.value) || 0;
-                    } else if (e.target.classList.contains('item-price')) {
-                        item.price = parseFloat(e.target.value) || 0;
-                    }
-                    renderReceipt();
-                });
-
-                itemList.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('remove-btn')) {
-                        const row = e.target.closest('.item-row');
-                        if (!row) return;
-                        const id = parseInt(row.dataset.id);
-                        items = items.filter(i => i.id !== id);
-                        renderItemList();
-                        renderReceipt();
-                    }
-                });
-            }
-
-            function updateLogoPreview() {
-                if (logoDataUrl) {
-                    logoPreview.innerHTML = `<img src="${logoDataUrl}" alt="Logo preview">`;
-                    removeLogoBtn.style.display = 'inline-block';
-                } else {
-                    logoPreview.innerHTML = '';
-                    removeLogoBtn.style.display = 'none';
-                }
-            }
-
-            // ===== RENDER ITEM LIST =====
-            function renderItemList() {
-                itemList.innerHTML = '';
-                items.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'item-row';
-                    row.dataset.id = item.id;
-                    row.innerHTML = `
-                        <input type="text" class="item-name" placeholder="Item name" value="${escapeHtml(item.name)}">
-                        <input type="number" class="item-qty" placeholder="Qty" value="${item.qty}" min="0" step="1">
-                        <input type="number" class="item-price" placeholder="Price" value="${item.price}" min="0" step="0.01">
-                        <button class="remove-btn" title="Remove item">&#10005;</button>
-                    `;
-                    itemList.appendChild(row);
-                });
-                itemCountSpan.textContent = `(${items.length} item${items.length !== 1 ? 's' : ''})`;
-            }
-
-            // ===== CALCULATIONS =====
-            function calculateSubtotal() {
-                return items.reduce((sum, item) => {
-                    const qty = parseFloat(item.qty) || 0;
-                    const price = parseFloat(item.price) || 0;
-                    return sum + (qty * price);
-                }, 0);
-            }
-
-            function calculateTax(subtotal) {
-                const rate = parseFloat(taxRate.value) || 0;
-                return subtotal * (rate / 100);
-            }
-
-            function calculateTotal(subtotal, taxAmount) {
-                return subtotal + taxAmount;
-            }
-
-            function calculateChange(total, paid) {
-                return paid - total;
-            }
-
-            // ===== FORMAT HELPERS =====
-            function formatCurrency(amount) {
-                return '$' + amount.toFixed(2);
-            }
-
-            function formatDate(dateStr) {
-                if (!dateStr) return '';
-                const d = new Date(dateStr + 'T00:00:00');
-                if (isNaN(d.getTime())) return dateStr;
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const year = d.getFullYear();
-                return `${month}/${day}/${year}`;
-            }
-
-            function formatTime(timeStr) {
-                if (!timeStr) return '';
-                return timeStr;
-            }
-
-            function escapeHtml(str) {
-                return String(str)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-            }
-
-            function generateAsteriskLine(width) {
-                const count = width || 34;
-                return '*'.repeat(count);
-            }
-
-            function generateDashLine(width) {
-                const count = width || 34;
-                return '-'.repeat(count);
-            }
-
-            function generateFakeBarcode() {
-                const bars = [];
-                for (let i = 0; i < 35; i++) {
-                    bars.push(Math.random() > 0.5 ? '|' : ' ');
-                }
-                return bars.join('');
-            }
-
-            // ===== RENDER RECEIPT =====
-            function renderReceipt() {
-                const subtotal = calculateSubtotal();
-                const taxAmount = calculateTax(subtotal);
-                const total = calculateTotal(subtotal, taxAmount);
-                const paid = parseFloat(amountPaid.value) || 0;
-                const change = calculateChange(total, paid);
-                const taxRateVal = parseFloat(taxRate.value) || 0;
-
-                const dateFormatted = formatDate(receiptDate.value);
-                const timeFormatted = formatTime(receiptTime.value);
-                const barcodeTextVal = barcodeText.value || receiptNumber.value;
-
-                const asteriskTop = generateAsteriskLine(36);
-                const asteriskBottom = generateAsteriskLine(36);
-                const dashLine = generateDashLine(36);
-                const dashLineShort = generateDashLine(32);
-
-                const storeNameVal = (storeName.value || 'STORE NAME').toUpperCase();
-                const storeAddressVal = storeAddress.value || '';
-                const storeCityVal = storeCity.value || '';
-                const storePhoneVal = storePhone.value || '';
-                const cashierVal = (cashierName.value || 'N/A').toUpperCase();
-                const receiptNumVal = receiptNumber.value || '000000';
-                const footerMsgRaw = footerMsg.value || '';
-                const footerLines = footerMsgRaw.split('\n').filter(line => line.trim().length > 0);
-
-                let html = '';
-
-                // Top asterisk border
-                html += `<span class="rc-asterisk">${asteriskTop}</span>\n`;
-
-                // Logo section
-                if (logoDataUrl) {
-                    html += `<img src="${logoDataUrl}" class="rc-logo" alt="Store logo">\n`;
-                } else {
-                    // Optional placeholder, can be removed if you prefer no placeholder
-                    // html += `<span class="rc-logo-placeholder">[ YOUR LOGO ]</span>\n`;
-                }
-
-                // Store name
-                html += `<span class="rc-store-name">${escapeHtml(storeNameVal)}</span>\n`;
-
-                // Address and phone
-                if (storeAddressVal) html += `<span class="rc-address">${escapeHtml(storeAddressVal)}</span>\n`;
-                if (storeCityVal) html += `<span class="rc-address">${escapeHtml(storeCityVal)}</span>\n`;
-                if (storePhoneVal) html += `<span class="rc-address">${escapeHtml(storePhoneVal)}</span>\n`;
-
-                // Bottom asterisk border
-                html += `<span class="rc-asterisk">${asteriskBottom}</span>\n`;
-
-                // Blank line
-                html += `\n`;
-
-                // Date/Time/Receipt #/Cashier
+            // Transaction details
+            html +=
+                `<div class="row"><span>TRANSACTION TYPE:</span><span>${escapeHtml(transactionType)}</span></div>`;
+            html +=
+                `<div class="row"><span>AUTHORIZATION:</span><span>${escapeHtml(authorization)}</span></div>`;
+            if (paymentCode) {
                 html +=
-                    `<span class="rc-meta"><span>DATE: ${escapeHtml(dateFormatted)}</span><span>TIME: ${escapeHtml(timeFormatted)}</span></span>\n`;
+                    `<div class="row"><span>PAYMENT CODE:</span><span>${escapeHtml(paymentCode)}</span></div>`;
+            }
+            if (cardReader) {
                 html +=
-                    `<span class="rc-meta"><span>RECEIPT #: ${escapeHtml(receiptNumVal)}</span><span>CASHIER: ${escapeHtml(cashierVal)}</span></span>\n`;
-
-                html += `\n`;
-
-                // Dash separator
-                html += `<span class="rc-dash">${dashLine}</span>\n`;
-
-                // Column headers
-                html +=
-                    `<span class="rc-item-row"><span class="rc-item-name" style="font-weight:bold;">ITEM</span><span class="rc-item-qty" style="font-weight:bold;">QTY</span><span class="rc-item-price" style="font-weight:bold;text-align:right;">PRICE</span></span>\n`;
-
-                html += `<span class="rc-dash">${dashLine}</span>\n`;
-
-                // Items
-                if (items.length === 0) {
-                    html +=
-                        `<span class="rc-item-row"><span class="rc-item-name" style="color:#888;">NO ITEMS</span><span class="rc-item-qty"></span><span class="rc-item-price"></span></span>\n`;
-                } else {
-                    items.forEach(item => {
-                        const name = (item.name || 'ITEM').toUpperCase();
-                        const qty = parseFloat(item.qty) || 0;
-                        const price = parseFloat(item.price) || 0;
-                        const lineTotal = qty * price;
-                        const qtyStr = qty % 1 === 0 ? String(qty) : qty.toFixed(1);
-                        html +=
-                            `<span class="rc-item-row"><span class="rc-item-name">${escapeHtml(name)}</span><span class="rc-item-qty">${qtyStr}</span><span class="rc-item-price">${formatCurrency(lineTotal)}</span></span>\n`;
-                    });
-                }
-
-                html += `<span class="rc-dash">${dashLine}</span>\n`;
-
-                // Totals
-                html +=
-                    `<span class="rc-total-line"><span>SUBTOTAL:</span><span>${formatCurrency(subtotal)}</span></span>\n`;
-                html +=
-                    `<span class="rc-total-line"><span>TAX (${taxRateVal.toFixed(1)}%):</span><span>${formatCurrency(taxAmount)}</span></span>\n`;
-                html += `<span class="rc-dash">${dashLineShort}</span>\n`;
-                html +=
-                    `<span class="rc-total-line" style="font-size:0.85rem;text-transform:uppercase;"><span>TOTAL:</span><span>${formatCurrency(total)}</span></span>\n`;
-
-                html += `\n`;
-
-                // Payment info
-                html +=
-                    `<span class="rc-total-line"><span>${paid >= total ? 'CASH' : 'AMOUNT PAID'}:</span><span>${formatCurrency(paid)}</span></span>\n`;
-                if (change >= 0 && paid >= total) {
-                    html +=
-                        `<span class="rc-total-line"><span>CHANGE:</span><span>${formatCurrency(change)}</span></span>\n`;
-                } else if (paid > 0 && paid < total) {
-                    const balance = total - paid;
-                    html +=
-                        `<span class="rc-total-line" style="color:#c0392b;"><span>BALANCE DUE:</span><span>${formatCurrency(balance)}</span></span>\n`;
-                }
-
-                html += `<span class="rc-dash">${dashLine}</span>\n`;
-
-                // Footer messages
-                if (footerLines.length > 0) {
-                    html += `\n`;
-                    footerLines.forEach(line => {
-                        html +=
-                        `<span class="rc-footer-msg">${escapeHtml(line.toUpperCase())}</span>\n`;
-                    });
-                }
-
-                html += `\n`;
-
-                // Barcode
-                const barcode = generateFakeBarcode();
-                html += `<span class="rc-barcode">${barcode}</span>\n`;
-                html +=
-                    `<span class="rc-barcode" style="font-size:0.55rem;">*${escapeHtml(barcodeTextVal)}*</span>\n`;
-
-                html += `\n<span class="rc-asterisk">${asteriskBottom}</span>`;
-
-                receiptContent.innerHTML = html;
-
-                updateColorScheme();
+                    `<div class="row"><span>CARD READER:</span><span>${escapeHtml(cardReader)}</span></div>`;
             }
 
-            function updateColorScheme() {
-                const scheme = colorScheme.value;
-                receiptContainer.classList.remove('scheme-classic', 'scheme-inverted', 'scheme-blue', 'scheme-green',
-                    'scheme-amber', 'scheme-pink');
-                receiptContainer.classList.add('scheme-' + scheme);
-            }
+            html += `<div class="divider"></div>`;
 
-            // ===== PRINT =====
-            function handlePrint() {
-                renderReceipt();
-                setTimeout(() => {
-                    window.print();
-                }, 100);
-            }
+            // Tip & signature area
+            html += `<div class="tip-line"><span>TIP:</span><span>____________________</span></div>`;
+            html +=
+                `<div class="tip-line" style="margin-top:20px;"><span>TOTAL:</span><span>____________________</span></div>`;
+            html +=
+                `<div class="signature"><span>X</span><span>____________________</span></div>`;
 
-            // ===== DOWNLOAD PNG =====
-            function downloadPng() {
-                renderReceipt();
-                const container = receiptContainer;
+            html += `<div class="divider"></div>`;
 
-                // Temporarily ensure high quality
-                html2canvas(container, {
-                    scale: 2,
-                    backgroundColor: null,
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false,
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `receipt_${receiptNumber.value || 'download'}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    showToast('PNG downloaded successfully!');
-                }).catch(err => {
-                    console.error('Error generating PNG:', err);
-                    showToast('Error generating PNG. Try again.');
-                });
-            }
-
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2000);
-            }
-
-            // ===== INITIALIZE =====
-            init();
-
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'p') {
-                    renderReceipt();
-                }
+            // Footer
+            html += `<div class="footer center">`;
+            html += `<div style="font-weight:bold;">CUSTOMER COPY</div>`;
+            footerLines.forEach(line => {
+                html += `<div>${escapeHtml(line.toUpperCase())}</div>`;
             });
+            html += `<div style="margin-top:8px;">${escapeHtml(storeName.toUpperCase())}</div>`;
+            html += `</div>`;
 
-            // Expose for debugging
-            window.retroReceipt = {
-                render: renderReceipt,
-                items,
-                generateNewReceiptNumber,
-                downloadPng
-            };
+            // Barcode area
+            html += `<div class="barcode-area">`;
+            html +=
+                `<svg id="barcodeSvg" class="barcode-svg" jsbarcode-format="CODE128" jsbarcode-value="${escapeHtml(barcodeVal)}" jsbarcode-textmargin="0" jsbarcode-height="50" jsbarcode-width="2"></svg>`;
+            html += `<div class="barcode-text">*${escapeHtml(barcodeVal)}*</div>`;
+            html += `</div>`;
 
-        })();
+            // Bottom asterisk
+            html += `<div class="asterisk-line" style="margin-top:15px;">${asteriskLine}</div>`;
+
+            receipt.innerHTML = html;
+            receipt.className = 'scheme-' + scheme;
+
+            // Generate barcode
+            try {
+                JsBarcode("#barcodeSvg", barcodeVal, {
+                    format: "CODE128",
+                    displayValue: false,
+                    lineColor: getComputedStyle(receipt).color || '#000',
+                    width: 2,
+                    height: 50,
+                    margin: 0,
+                });
+            } catch (e) {
+                console.log('Barcode error:', e);
+            }
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoDataUrl = e.target.result;
+                    updateLogoPreview();
+                    renderReceipt();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateLogoPreview() {
+            const preview = document.getElementById('logoPreview');
+            const removeBtn = document.getElementById('removeLogoBtn');
+            if (logoDataUrl) {
+                preview.innerHTML = `<img src="${logoDataUrl}" alt="Logo">`;
+                removeBtn.style.display = 'inline-block';
+            } else {
+                preview.innerHTML = '';
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function removeLogo() {
+            logoDataUrl = null;
+            document.getElementById('logoInput').value = '';
+            updateLogoPreview();
+            renderReceipt();
+        }
+
+        function downloadPNG() {
+            renderReceipt();
+            const receipt = document.getElementById('receipt');
+
+            html2canvas(receipt, {
+                scale: 3,
+                backgroundColor: getComputedStyle(receipt).backgroundColor || '#ffffff',
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const storeName = document.getElementById('storeName').value.replace(/\s+/g, '_') || 'receipt';
+                link.download = `${storeName}_receipt.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                showToast('PNG downloaded successfully!');
+            }).catch(err => {
+                console.error('Error:', err);
+                showToast('Error generating PNG');
+            });
+        }
+
+        function printReceipt() {
+            renderReceipt();
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+
+        function resetToDefault() {
+            document.getElementById('storeName').value = "SILLUEETTE'S CAFE";
+            document.getElementById('storeAddress').value = "262, CAPITAL OF LILACITH";
+            document.getElementById('storeCity').value = "LILACITH";
+            document.getElementById('storePhone').value = "0135508701";
+            document.getElementById('orderNumber').value = "1";
+            document.getElementById('hostName').value = "SILL";
+            document.getElementById('receiptDate').value = "15 AUG 2026";
+            document.getElementById('receiptTime').value = "12:35 PM";
+            document.getElementById('itemName').value = "1 BUST UP SKETCH";
+            document.getElementById('itemPrice').value = "15.00";
+            document.getElementById('taxAmount').value = "0.00";
+            document.getElementById('transactionType').value = "SALE";
+            document.getElementById('authorization').value = "APPROVED";
+            document.getElementById('paymentCode').value = "";
+            document.getElementById('cardReader').value = "";
+            document.getElementById('barcodeValue').value = "0135508701";
+            document.getElementById('footerMsg').value = "THANKS FOR VISITING DEAR\nLITTLE ANGEL";
+            document.getElementById('colorScheme').value = "classic";
+            logoDataUrl = null;
+            document.getElementById('logoInput').value = '';
+            updateLogoPreview();
+            renderReceipt();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Initialize
+        window.onload = function() {
+            renderReceipt();
+        };
     </script>
 </body>
 </html>
